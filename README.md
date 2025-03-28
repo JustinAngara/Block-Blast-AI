@@ -1,3 +1,7 @@
+# What is this?
+3/28: I created a simple block blast clone that mimics teh functionality of the popular mobile game 'Block Blast' Now, my next steps will be coding in Java to scan the website, archive the pieces, evaluate the best move, and play it programmatically (external, thus not directly interfereing with the website's data). I will determine best move by an Heuristic-based algorithm
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
