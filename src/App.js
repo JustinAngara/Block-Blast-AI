@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import styled from "styled-components";
+import Grid from "./Main/Grid.js";
+const App = () => {
+    return (
+        <AppStyled>
+            <div className="center">
+                <Grid />
+            </div>
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+        </AppStyled>
+    );
+};
 
 export default App;
+
+const AppStyled = styled.div`
+    background-image: linear-gradient(rgba(0, 0, 0, 0.31) 2px, transparent 2px),
+        linear-gradient(to right, rgba(0, 0, 0, 0.31) 2px, transparent 2px);
+    background-size: 32px 32px;
+    background-color: #ffffff;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers horizontally */
+
+    .center {
+        display: flex;
+        flex-direction: column; /* Stack Grid and ItemLayout vertically */
+        align-items: center;
+        gap: 20px; /* Adds space between Grid and ItemLayout */
+    }
+`;
