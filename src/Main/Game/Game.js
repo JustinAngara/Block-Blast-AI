@@ -85,6 +85,9 @@ const logic = {
         return insertion(block);
         // checkForBlast();
     },
+    isGameOver: function(block){
+        return isGameOver(block);
+    }
 };
 
 /**
@@ -147,6 +150,13 @@ let insertion = (block) => {
 
     return true;
 };
+let isGameOver = (block) =>{
+    //block.board gives us the stuff
+    let board = block.board;
+    
+
+    return true;
+}
 
 let generateBoard = () => {
     let t = [];

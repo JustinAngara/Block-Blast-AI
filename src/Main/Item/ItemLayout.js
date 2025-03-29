@@ -1,65 +1,97 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { logic } from "../Game/Game";
 
-// Display 1 draggable item
-const ItemLayout = ({ onBlockUsed }) => {
-    const [currentItem, setCurrentItem] = useState(null);
-    const [remainingItems, setRemainingItems] = useState([]);
+// Display 3 draggable items
+const ItemLayout = () => {
+    const [items, setItems] = useState([]);
+    const draggedItemRef = useRef(null); // Ref to hold dragged block
 
     // Load 3 items on component mount
     useEffect(() => {
-        generateNewItems(); // Generate items on first load
+        generateNewItems();
     }, []);
 
-    // Generate 3 new items and display the first one
+    // Generate 3 new items if all are used
     const generateNewItems = () => {
         logic.initItems(); // Generate new items
-        const items = logic.getItems(); // Get generated items
-        setRemainingItems(items); // Store remaining items
-        if (items.length > 0) {
-            setCurrentItem(items[0]);
-        }
+        setItems(logic.getItems()); // Store the new items
     };
 
-    // Drag handler: pass block data on drag
-    const handleDragStart = (e, block) => {
+    // Dynamically create drag preview to match block size
+    const handleDragStart = (e, block, index) => {
         e.dataTransfer.setData(
             "application/json",
-            JSON.stringify({ x: 0, y: 0, board: block })
+            JSON.stringify({ ...block, index })
         );
 
-        // Transparent drag image to avoid default drag icon
-        const dragImg = new Image();
-        dragImg.src = "/transparent.png"; // 1x1 transparent image
-        e.dataTransfer.setDragImage(dragImg, 0, 0);
+        // Generate a temporary drag preview block to match the original item
+        const dragPreview = document.createElement("div");
+        dragPreview.style.position = "absolute";
+        dragPreview.style.top = "-999px"; // Move out of view
+        dragPreview.style.left = "-999px";
+        dragPreview.style.display = "inline-grid";
+        dragPreview.style.gridTemplateRows = `repeat(${block.board.length}, 60px)`;
+        dragPreview.style.gridTemplateColumns = `repeat(${block.board[0].length}, 60px)`;
+        dragPreview.style.gap = "1px";
+
+        // Create cell preview
+        block.board.forEach((row) => {
+            row.forEach((cell) => {
+                const cellDiv = document.createElement("div");
+                cellDiv.style.width = "200px";
+                cellDiv.style.height = "200px";
+                cellDiv.style.aspectRatio = 1;
+                cellDiv.style.border = "1px solid #ccc";
+                cellDiv.style.backgroundColor = cell === 1 ? "black" : "white";
+                dragPreview.appendChild(cellDiv);
+            });
+        });
+
+        document.body.appendChild(dragPreview);
+        e.dataTransfer.setDragImage(dragPreview, 0, 0);
+
+        // Cleanup after drag ends
+        setTimeout(() => document.body.removeChild(dragPreview), 0);
     };
 
-    // Handle removing used item and generating the next one
-    const handleBlockUsed = () => {
-        const newItems = remainingItems.slice(1); // Remove used item
-        setRemainingItems(newItems);
+    // Remove block after successful placement
+    const removeBlock = (index) => {
+        setItems((prevItems) => {
+            // Remove block at the given index
+            const updatedItems = prevItems.filter((_, i) => i !== index);
 
-        if (newItems.length > 0) {
-            setCurrentItem(newItems[0]);
-        } else {
-            generateNewItems(); // Regenerate when all items are used
-        }
+            // Regenerate new items if all blocks are used
+            if (updatedItems.length === 0) {
+                generateNewItems();
+            }
 
-        // Notify parent (Grid) to update board
-        if (onBlockUsed) {
-            onBlockUsed(); // Notify that block was placed successfully
-        }
+            return updatedItems;
+        });
     };
+
+    // Listen for blockUsed event and remove the block
+    useEffect(() => {
+        const handleBlockUsed = (e) => {
+            removeBlock(e.detail.index);
+        };
+
+        document.addEventListener("blockUsed", handleBlockUsed);
+        return () =>
+            document.removeEventListener("blockUsed", handleBlockUsed);
+    }, [items]);
 
     return (
         <ItemLayoutStyled>
-            {currentItem && (
+            {items.map((item, index) => (
                 <BlockWrapper
+                    key={index}
                     draggable
-                    onDragStart={(e) => handleDragStart(e, currentItem)}
+                    onDragStart={(e) =>
+                        handleDragStart(e, { x: 0, y: 0, board: item }, index)
+                    }
                 >
-                    {currentItem.map((row, rowIndex) => (
+                    {item.map((row, rowIndex) => (
                         <Row key={rowIndex}>
                             {row.map((cell, colIndex) => (
                                 <Cell
@@ -70,7 +102,7 @@ const ItemLayout = ({ onBlockUsed }) => {
                         </Row>
                     ))}
                 </BlockWrapper>
-            )}
+            ))}
         </ItemLayoutStyled>
     );
 };
@@ -81,10 +113,10 @@ const ItemLayoutStyled = styled.div`
     margin-top: 5px;
     position: relative;
     width: 100%;
-    height: auto;
+    height: 220px;
     background-color: lightgray;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     padding: 10px;
 `;
 

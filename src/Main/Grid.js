@@ -6,6 +6,8 @@ import ItemLayout from "./Item/ItemLayout";
 // Grid to accept drag-and-drop
 const Grid = () => {
     const [board, setBoard] = useState([]);
+    const [hoveredCell, setHoveredCell] = useState({ row: -1, col: -1 });
+    const [validPosition, setValidPosition] = useState(false);
 
     // Load initial board on component mount
     useEffect(() => {
@@ -13,49 +15,101 @@ const Grid = () => {
         setBoard([...logic.getBoard()]);
     }, []);
 
+    // Check if a block can be placed at the hovered position
+    const checkValidPosition = (block, row, col) => {
+        const tempBoard = logic.getBoard();
+        const height = block.board.length;
+        const width = block.board[0].length;
+
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+                if (row + i >= 8 ||
+                    col + j >= 8 ||
+                    (block.board[i][j] === 1 &&
+                    tempBoard[row + i][col + j] === 1)) {
+
+                        return false;
+                }
+            }
+        }
+        return true; 
+    };
+
     // Handle dropping block onto grid
-    const handleDrop = (e, row, col, onBlockUsed) => {
+    const handleDrop = (e, row, col) => {
         e.preventDefault();
-        const { board: block } = JSON.parse(
+        const { board: block, index } = JSON.parse(
             e.dataTransfer.getData("application/json")
         );
 
         // Place the block at the drop location
         const newBlock = {
-            x: col, // X corresponds to col
-            y: row, // Y corresponds to row
+            x: col,
+            y: row,
             board: block,
         };
 
         // Try inserting the block
         if (logic.insert(newBlock)) {
             setBoard([...logic.getBoard()]); // Update board if inserted
-            onBlockUsed(); // Notify that the block was used and trigger new item
+            handleBlockUsed(index); // Remove block after placing
         } else {
             console.log("Invalid placement!");
         }
+
+        // Reset hovered cell after drop
+        setHoveredCell({ row: -1, col: -1 });
+        setValidPosition(false);
     };
 
-    // Prevent default drag-over behavior
-    const handleDragOver = (e) => {
+    // Handle drag over to update hovered cell position and check validity
+    const handleDragOver = (e, row, col) => {
+        // ✅ Call preventDefault to allow the cell to receive drag events
         e.preventDefault();
+
+        const blockData = e.dataTransfer.getData("application/json");
+        if (!blockData) return;
+
+        const block = JSON.parse(blockData);
+        setHoveredCell({ row, col });
+
+        // Check if the block can fit at the target coordinates
+        if (checkValidPosition(block, row, col)) {
+            setValidPosition(true);
+        } else {
+            setValidPosition(false);
+        }
+    };
+
+    // Handle removing block after successful drop
+    const handleBlockUsed = (index) => {
+        document.dispatchEvent(
+            new CustomEvent("blockUsed", { detail: { index } })
+        );
     };
 
     return (
         <Container>
-            {/* Pass onBlockUsed to regenerate items after placing */}
-            <ItemLayout onBlockUsed={() => setBoard([...logic.getBoard()])} />
-            <GridStyled>
+            <ItemLayout />
+            {/* Ensure preventDefault() at grid level for drag-over */}
+            <GridStyled onDragOver={(e) => e.preventDefault()}>
                 {board.map((row, rowIndex) =>
                     row.map((cell, colIndex) => (
                         <Cell
                             key={`${rowIndex}-${colIndex}`}
                             filled={cell === 1}
-                            onDrop={(e) => handleDrop(e, rowIndex, colIndex, () => {
-                                // Update after successful drop
-                                setBoard([...logic.getBoard()]);
-                            })}
-                            onDragOver={handleDragOver}
+                            hover={
+                                hoveredCell.row === rowIndex &&
+                                hoveredCell.col === colIndex
+                            }
+                            valid={validPosition}
+                            onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
+                            onDragOver={(e) =>
+                                handleDragOver(e, rowIndex, colIndex)
+                            }
+                            onDragLeave={() =>
+                                setHoveredCell({ row: -1, col: -1 })
+                            } // Reset hover on leave
                         />
                     ))
                 )}
@@ -91,4 +145,21 @@ const Cell = styled.div`
     height: 100%;
     aspect-ratio: 1;
     border: 1px solid #ccc;
+
+    // Highlight valid positions with a glowing effect
+    ${({ hover, valid }) =>
+        hover &&
+        valid &&
+        `
+        box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.8); // Green glow if valid
+        border: 2px solid green;
+    `};
+
+    ${({ hover, valid }) =>
+        hover &&
+        !valid &&
+        `
+        box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.8); // Red glow if invalid
+        border: 2px solid red;
+    `};
 `;
