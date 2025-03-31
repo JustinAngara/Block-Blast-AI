@@ -34,7 +34,7 @@ const ItemLayout = () => {
         dragPreview.style.gridTemplateRows = `repeat(${block.board.length}, 60px)`;
         dragPreview.style.gridTemplateColumns = `repeat(${block.board[0].length}, 60px)`;
         dragPreview.style.gap = "1px";
-
+        
         // Create cell preview
         block.board.forEach((row) => {
             row.forEach((cell) => {
@@ -43,6 +43,7 @@ const ItemLayout = () => {
                 cellDiv.style.height = "200px";
                 cellDiv.style.aspectRatio = 1;
                 cellDiv.style.border = "1px solid #ccc";
+                console.log(cell);
                 cellDiv.style.backgroundColor = cell === 1 ? "black" : "white";
                 dragPreview.appendChild(cellDiv);
             });
