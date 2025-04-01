@@ -6,7 +6,7 @@ import { logic } from "../Game/Game";
 const ItemLayout = () => {
     const [items, setItems] = useState([]);
     const draggedItemRef = useRef(null); // Ref to hold dragged block
-
+    const [score, setScore] = useState(0);
     // Load 3 items on component mount
     useEffect(() => {
         generateNewItems();
@@ -34,7 +34,7 @@ const ItemLayout = () => {
         dragPreview.style.gridTemplateRows = `repeat(${block.board.length}, 60px)`;
         dragPreview.style.gridTemplateColumns = `repeat(${block.board[0].length}, 60px)`;
         dragPreview.style.gap = "1px";
-        
+
         // Create cell preview
         block.board.forEach((row) => {
             row.forEach((cell) => {
@@ -59,12 +59,15 @@ const ItemLayout = () => {
     // Remove block after successful placement
     const removeBlock = (index) => {
         setItems((prevItems) => {
+            let score = 0;
+            const dimScore = logic.getItems().filter(e=>e===1).length;
             // Remove block at the given index
             const updatedItems = prevItems.filter((_, i) => i !== index);
 
             // Regenerate new items if all blocks are used
             if (updatedItems.length === 0) {
                 generateNewItems();
+                setScore(score+dimScore)
             }
 
             return updatedItems;
@@ -84,6 +87,7 @@ const ItemLayout = () => {
 
     return (
         <ItemLayoutStyled>
+            <h1>Score: {score}</h1>
             {items.map((item, index) => (
                 <BlockWrapper
                     key={index}

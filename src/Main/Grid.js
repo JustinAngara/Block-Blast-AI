@@ -7,7 +7,6 @@ import ItemLayout from "./Item/ItemLayout";
 const Grid = () => {
     const [board, setBoard] = useState([]);
     const [hoveredCell, setHoveredCell] = useState({ row: -1, col: -1 });
-
     // Load initial board on component mount
     useEffect(() => {
         logic.initBoard();
@@ -44,6 +43,8 @@ const Grid = () => {
     const handleDragOver = (e, row, col) => {
         e.preventDefault();
         setHoveredCell({ row, col });
+
+
     };
 
     // Handle removing block after successful drop
