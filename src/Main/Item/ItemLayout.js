@@ -87,7 +87,7 @@ const ItemLayout = () => {
 
     return (
         <ItemLayoutStyled>
-            <h1>Score: {score}</h1>
+            <h1>Update Score: {score}</h1>
             {items.map((item, index) => (
                 <BlockWrapper
                     key={index}
