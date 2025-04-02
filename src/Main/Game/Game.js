@@ -57,11 +57,12 @@ let testBoard = [
 ];
 const logic = {
     board: testBoard,
+    score: 0,
     items: [],
 
     // mutator stuff
     initBoard: function () {
-        console.log("called");
+        // console.log("called");
         this.board = generateBoard();
     },
     initItems: function () {
@@ -69,6 +70,9 @@ const logic = {
     },
 
     // getter stuff
+    getScore: function(){
+        return this.score;
+    },
     getBoard: function () {
         return this.board;
     },
@@ -153,7 +157,7 @@ let insertion = (block) => {
 let isGameOver = (block) =>{
     //block.board gives us the stuff
     let board = block.board;
-    
+
 
     return true;
 }
@@ -167,7 +171,7 @@ let generateBoard = () => {
         }
         t.push(z);
     }
-    console.log(t);
+    // console.log(t);
     return t;
 };
 
@@ -205,8 +209,8 @@ let getVariant = (item) => {
     if (Math.random() < 0.5) {
         item = transpose(item);
     }
-    console.log(`this is item`);
-    console.log(item);
+    // console.log(`this is item`);
+    // console.log(item);
     return item;
 };
 let transpose = (matrix) => {
@@ -266,16 +270,24 @@ let checkForBlast = () => {
         }
     }
 
-    console.log("before");
-    console.log(logic.getBoard());
-    console.log(`
-        row: ${rowIndicies.length}
-        col: ${columnIndicies.length}
-    `);
+    // console.log("before");
+    // console.log(logic.getBoard());
+    // console.log(`
+        // row: ${rowIndicies.length}
+        // col: ${columnIndicies.length}
+    // `);
 
     executeBlast(rowIndicies, columnIndicies);
-    console.log("after");
-    console.log(logic.getBoard());
+    // console.log("after");
+    // console.log(logic.getBoard());
+
+
+    // this will update score
+    let parsedItem = logic.getItems()[0];
+    // console.log(`parsedItem dimensions
+    //     ${parsedItem.length}
+    //     ${parsedItem[0].length}`);
+    logic.score+=parsedItem.length * parsedItem[0].length;
 };
 
 /*
@@ -294,6 +306,13 @@ let executeBlast = (row, col) => {
             logic.board[j][col[i]] = 0;
         }
     }
+
+
+    console.log(`should fucking hit
+        ${row.length}
+        ${col.length}`);
+    // increase score by margin
+    logic.score += (col.length + row.length) * 100;
 };
 
 export { logic };

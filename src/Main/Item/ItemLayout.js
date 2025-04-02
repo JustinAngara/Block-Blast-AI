@@ -59,32 +59,28 @@ const ItemLayout = () => {
     // Remove block after successful placement
     const removeBlock = (index) => {
         setItems((prevItems) => {
-            let score = 0;
-            const dimScore = logic.getItems().filter(e=>e===1).length;
-            // Remove block at the given index
             const updatedItems = prevItems.filter((_, i) => i !== index);
 
-            // Regenerate new items if all blocks are used
-            if (updatedItems.length === 0) {
-                generateNewItems();
-                setScore(score+dimScore)
-            }
-
+            generateNewItems();
             return updatedItems;
         });
     };
 
     // Listen for blockUsed event and remove the block
     useEffect(() => {
+        tempHelperUseEffect();
+    },[]);
+    let tempHelperUseEffect = () =>{
         const handleBlockUsed = (e) => {
             removeBlock(e.detail.index);
+            setScore(logic.getScore())
+
         };
 
         document.addEventListener("blockUsed", handleBlockUsed);
         return () =>
             document.removeEventListener("blockUsed", handleBlockUsed);
-    }, [items]);
-
+    }
     return (
         <ItemLayoutStyled>
             <h1>Update Score: {score}</h1>
