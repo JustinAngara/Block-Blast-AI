@@ -308,9 +308,9 @@ let executeBlast = (row, col) => {
     }
 
 
-    console.log(`should fucking hit
-        ${row.length}
-        ${col.length}`);
+    // console.log(`should hit when blast occurs
+    //     ${row.length}
+    //     ${col.length}`);
     // increase score by margin
     logic.score += (col.length + row.length) * 100;
 };

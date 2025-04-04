@@ -7,6 +7,7 @@ import ItemLayout from "./Item/ItemLayout";
 const Grid = () => {
     const [board, setBoard] = useState([]);
     const [hoveredCell, setHoveredCell] = useState({ row: -1, col: -1 });
+
     // Load initial board on component mount
     useEffect(() => {
         logic.initBoard();
@@ -39,12 +40,10 @@ const Grid = () => {
         setHoveredCell({ row: -1, col: -1 });
     };
 
-    // Handle drag over to update hovered cell :IMPORTANT LOOK AT THIS AGAIN
+    // Handle drag over to update hovered cell
     const handleDragOver = (e, row, col) => {
         e.preventDefault();
         setHoveredCell({ row, col });
-
-
     };
 
     // Handle removing block after successful drop
@@ -62,21 +61,20 @@ const Grid = () => {
     return (
         <Container>
             <ItemLayout />
-            {/* Ensure preventDefault() at grid level for drag-over */}
             <GridStyled onDragOver={(e) => e.preventDefault()}>
                 {board.map((row, rowIndex) =>
                     row.map((cell, colIndex) => (
                         <Cell
                             key={`${rowIndex}-${colIndex}`}
-                            filled={cell === 1}
-                            hovering={isCellHovered(rowIndex, colIndex)}
+                            $filled={cell === 1}
+                            $hovering={isCellHovered(rowIndex, colIndex)}
                             onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
                             onDragOver={(e) =>
                                 handleDragOver(e, rowIndex, colIndex)
                             }
                             onDragLeave={() =>
                                 setHoveredCell({ row: -1, col: -1 })
-                            } // Reset hover on leave
+                            }
                         />
                     ))
                 )}
@@ -86,6 +84,8 @@ const Grid = () => {
 };
 
 export default Grid;
+
+// Styled Components
 
 const Container = styled.div`
     display: flex;
@@ -107,17 +107,16 @@ const GridStyled = styled.div`
 `;
 
 const Cell = styled.div`
-    background-color: ${({ filled }) => (filled ? "black" : "white")};
+    background-color: ${({ $filled }) => ($filled ? "black" : "white")};
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
     border: 1px solid #ccc;
 
-    // Highlight individual cell on hover
-    ${({ hovering }) =>
-        hovering &&
+    ${({ $hovering }) =>
+        $hovering &&
         `
-        box-shadow: 0 0 12px 4px rgba(0, 128, 255, 0.8); // Blue glow
+        box-shadow: 0 0 12px 4px rgba(0, 128, 255, 0.8);
         border: 2px solid rgba(0, 128, 255, 0.9);
-    `};
+    `}
 `;

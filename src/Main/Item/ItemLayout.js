@@ -1,21 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { logic } from "../Game/Game";
 
 // Display 3 draggable items
 const ItemLayout = () => {
     const [items, setItems] = useState([]);
-    const draggedItemRef = useRef(null); // Ref to hold dragged block
     const [score, setScore] = useState(0);
-    // Load 3 items on component mount
+
     useEffect(() => {
         generateNewItems();
     }, []);
 
-    // Generate 3 new items if all are used
     const generateNewItems = () => {
-        logic.initItems(); // Generate new items
-        setItems(logic.getItems()); // Store the new items
+        logic.initItems();
+        setItems(logic.getItems()); // store the new items
     };
 
     // Dynamically create drag preview to match block size
@@ -43,16 +41,16 @@ const ItemLayout = () => {
                 cellDiv.style.height = "200px";
                 cellDiv.style.aspectRatio = 1;
                 cellDiv.style.border = "1px solid #ccc";
-                console.log(cell);
                 cellDiv.style.backgroundColor = cell === 1 ? "black" : "white";
                 dragPreview.appendChild(cellDiv);
+                console.log(`this creates temp cell div`);
             });
         });
 
         document.body.appendChild(dragPreview);
         e.dataTransfer.setDragImage(dragPreview, 0, 0);
 
-        // Cleanup after drag ends
+        // cleanup after drag ends
         setTimeout(() => document.body.removeChild(dragPreview), 0);
     };
 
@@ -68,9 +66,6 @@ const ItemLayout = () => {
 
     // Listen for blockUsed event and remove the block
     useEffect(() => {
-        tempHelperUseEffect();
-    },[]);
-    let tempHelperUseEffect = () =>{
         const handleBlockUsed = (e) => {
             removeBlock(e.detail.index);
             setScore(logic.getScore())
@@ -80,7 +75,8 @@ const ItemLayout = () => {
         document.addEventListener("blockUsed", handleBlockUsed);
         return () =>
             document.removeEventListener("blockUsed", handleBlockUsed);
-    }
+    });
+
     return (
         <ItemLayoutStyled>
             <h1>Update Score: {score}</h1>
@@ -90,14 +86,14 @@ const ItemLayout = () => {
                     draggable
                     onDragStart={(e) =>
                         handleDragStart(e, { x: 0, y: 0, board: item }, index)
-                    }
-                >
+                    }>
+
                     {item.map((row, rowIndex) => (
                         <Row key={rowIndex}>
                             {row.map((cell, colIndex) => (
                                 <Cell
                                     key={`${rowIndex}-${colIndex}`}
-                                    filled={cell === 1}
+                                    $filled={cell === 1}
                                 />
                             ))}
                         </Row>
@@ -134,8 +130,8 @@ const Row = styled.div`
 `;
 
 const Cell = styled.div`
-    width: 30px;
-    height: 30px;
-    border: 1px solid #ccc;
-    background-color: ${({ filled }) => (filled ? "black" : "white")};
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  background-color: ${({ $filled }) => ($filled ? "black" : "white")};
 `;
