@@ -68,12 +68,18 @@ const Grid = () => {
                             key={`${rowIndex}-${colIndex}`}
                             $filled={cell === 1}
                             $hovering={isCellHovered(rowIndex, colIndex)}
-                            onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
+                            onDrop={(e) => {
+                                    handleDrop(e, rowIndex, colIndex)
+                                    console.log('this is on drop');
+                                }
+                            }
                             onDragOver={(e) =>
                                 handleDragOver(e, rowIndex, colIndex)
                             }
-                            onDragLeave={() =>
-                                setHoveredCell({ row: -1, col: -1 })
+                            onDragLeave={() =>{
+                                    console.log('on drag leave');
+                                    setHoveredCell({ row: -1, col: -1 })
+                                }
                             }
                         />
                     ))
