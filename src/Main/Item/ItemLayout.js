@@ -45,6 +45,7 @@ const ItemLayout = () => {
 
     return (
         <ItemLayoutStyled>
+            <h1>this better work</h1>
             <h1>Update Score: {score}</h1>
             {items.map((item, index) => (
                 <BlockWrapper
@@ -54,7 +55,10 @@ const ItemLayout = () => {
                         handleDragStart(e, { x: 0, y: 0, board: item }, index)
                     }
                 >
-                    <Item block={item} />
+                    <div>
+                        this is the item
+                        <Item block={item} />
+                    </div>
                 </BlockWrapper>
             ))}
         </ItemLayoutStyled>
