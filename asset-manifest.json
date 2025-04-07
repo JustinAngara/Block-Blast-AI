@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Block-Blast-AI/static/css/main.c01d63c0.css",
-    "main.js": "/Block-Blast-AI/static/js/main.d587828b.js",
+    "main.js": "/Block-Blast-AI/static/js/main.9e0d6de9.js",
     "static/js/453.a1f5d00a.chunk.js": "/Block-Blast-AI/static/js/453.a1f5d00a.chunk.js",
     "index.html": "/Block-Blast-AI/index.html",
     "main.c01d63c0.css.map": "/Block-Blast-AI/static/css/main.c01d63c0.css.map",
-    "main.d587828b.js.map": "/Block-Blast-AI/static/js/main.d587828b.js.map",
+    "main.9e0d6de9.js.map": "/Block-Blast-AI/static/js/main.9e0d6de9.js.map",
     "453.a1f5d00a.chunk.js.map": "/Block-Blast-AI/static/js/453.a1f5d00a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c01d63c0.css",
-    "static/js/main.d587828b.js"
+    "static/js/main.9e0d6de9.js"
   ]
 }
