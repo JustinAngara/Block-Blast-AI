@@ -27,11 +27,14 @@ const Grid = () => {
             y: row,
             board: block,
         };
+        console.log(newBlock);
 
         // Try inserting the block
         if (logic.insert(newBlock)) {
-            setBoard([...logic.getBoard()]); // Update board if inserted
             handleBlockUsed(index); // Remove block after placing
+            setBoard([...logic.getBoard()]); // Update board if inserted
+
+            console.log('insertion should work');
         } else {
             console.log("Invalid placement!");
         }
